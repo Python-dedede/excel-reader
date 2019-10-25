@@ -37,17 +37,17 @@ public class MyExcelReader {
                 , "Newmeds0bey");
         Statement st = con.createStatement();
 
-        BufferedReader br = new BufferedReader(new FileReader("c:\\users\\31883\\desktop\\长江云数据\\files.txt"));
-        String line="";
-        while ((line=br.readLine())!=null) {
-            if (line.startsWith("#")) {
-                System.out.println("已经注释掉的文件: "+line);
+        BufferedReader br = new BufferedReader(new FileReader("c:\\users\\31883\\desktop\\长江云数据\\files.txt")); //待读取的excel文件的名称
+        String excelFileName="";
+        while ((excelFileName=br.readLine())!=null) {
+            if (excelFileName.startsWith("#")) {
+                System.out.println("已经注释掉的文件: "+excelFileName);
                 continue;
             }
-            String name = "c:\\users\\31883\\desktop\\长江云数据\\" + line; //文件名称
-            System.out.println("正在读取的文件是: "+name);
+            String path2Excel = "c:\\users\\31883\\desktop\\长江云数据\\" + excelFileName; //excel文件全路径
+            System.out.println("正在读取的文件是: "+path2Excel);
             // 读取excel文件
-            FileInputStream is = new FileInputStream(name);
+            FileInputStream is = new FileInputStream(path2Excel);
             Workbook workbook = StreamingReader.builder()
                     .rowCacheSize(100)
                     .bufferSize(1024 * 1024 * 500)
