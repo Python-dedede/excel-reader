@@ -31,13 +31,23 @@ public class MyExcelReader {
 
     public static void main(String[] args)
             throws IOException, SQLException {
+        String url = "jdbc:mysql://bj-cdb-r2d0h6ku.sql.tencentcdb.com:62484/haihe_insight?characterEncoding=utf8&serverTimezone=UTC";
+        String url2 = "jdbc:mysql://tdsql-ivt307nw.sql.tencentcdb.com:13/haihe_insight?characterEncoding=utf8&serverTimezone=UTC";
+        String u2="haihe";
+        String p2="Newmeds0bey";
         Connection con = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3308/haihe_insight?characterEncoding=utf8&serverTimezone=UTC"
-                , "haihe2"
-                , "Newmeds0bey");
+//                "jdbc:mysql://localhost:3308/haihe_insight?characterEncoding=utf8&serverTimezone=UTC"
+//                url
+//                , "haihe2"
+//                ,"bigdatadev"
+//                , "Newmeds0bey"
+//                , "Newmedia"
+
+                url2,u2,p2
+                );
         Statement st = con.createStatement();
 
-        BufferedReader br = new BufferedReader(new FileReader("c:\\users\\31883\\desktop\\长江云数据\\files.txt")); //待读取的excel文件的名称
+        BufferedReader br = new BufferedReader(new FileReader("c:\\users\\31883\\desktop\\长江云数据\\files.sh")); //待读取的excel文件的名称
         String excelFileName="";
         while ((excelFileName=br.readLine())!=null) {
             if (excelFileName.startsWith("#")) {
@@ -57,6 +67,7 @@ public class MyExcelReader {
             try {
                 Sheet catalog = workbook.getSheet("catalog表");
                 catalog(st, catalog);
+                System.out.println("-----> catalog表");
 
                 Sheet readHourly = workbook.getSheet("30天稿件阅读量趋势+7天稿件top+中间位置+7天栏目");
                 readHourly(st, readHourly);
@@ -198,7 +209,7 @@ public class MyExcelReader {
                             + ",fixed=8"
                             + ",`count`="+(read.length()==0?0:read)
             ;
-//            System.out.println(sql);
+            System.out.println(sql);
             st.addBatch(sql);
         }
         st.executeBatch();
