@@ -1,0 +1,84 @@
+7天阅读量排行的稿件TOP10
+select title , ifnull(sum(pv_cur),0) pv from app_article_d where cal_time>=from_unixtime(1575965156,'%Y-%m-%d') and cal_time<=from_unixtime(1576569956,'%Y-%m-%d') and tenantId=? and title is not null and char_length(title)>0 group by title ORDER BY pv desc limit 10
+
+select ifnull(sum(pv_cur),0) as `number` from app_article_d where cal_time between FROM_UNIXTIME(1575965156,'%Y-%m-%d') and FROM_UNIXTIME(1576569956,'%Y-%m-%d') and tenantId=? and title is not null and char_length(title)>0
+
+
+7天阅读量排行的新闻栏目
+select catalog_id id ,catalog_name `name` , sum(pv_cur) as `pv` from app_catalog_d WHERE cal_time >= from_unixtime(1575965156,'%Y-%m-%d') and cal_time <= from_unixtime(1576569956,'%Y-%m-%d') and tenantId=? and char_length(catalog_id)>0 group by catalog_id order by pv desc limit 5
+
+select ifnull(sum(pv_cur),0) as `pv` from app_catalog_d WHERE cal_time >= from_unixtime(1575965156,'%Y-%m-%d') and cal_time <= from_unixtime(1576569956,'%Y-%m-%d') and tenantId=? and char_length(catalog_id)>0
+
+select catalogId id , catalogName name from article where catalogId in( ? , ? , ? , ? , ? ) and char_length(catalogName)>0 group by catalogId,catalogName
+
+
+最近24小时阅读量
+select concat(cal_time,' ',hour_str,':00:00') `time` ,ifnull(sum(pv_cur),0) number
+from app_article_h
+where tenantId=? and unix_timestamp(concat(cal_time,' ',hour_str))>=1576487156 and unix_timestamp(concat(cal_time,' ',hour_str)) <= 1576569956 group by concat(cal_time,' ',hour_str,':00:00')
+
+
+注册会员地域分布排行
+select city territory
+      ,ifnull(sum(registered_cur),0) registered
+from app_city_register_d
+where cal_time>=from_unixtime(315504000,'%Y-%m-%d')
+  and cal_time <= from_unixtime(1576569956,'%Y-%m-%d')
+  and tenantId=? and char_length(city)>0
+  and city!='\\N'
+  and city!='null'
+group by city
+order by registered desc
+limit 5
+
+
+中间12个指标
+select sum(registered_cur) registered
+      ,sum(pv_cur) pv
+      ,sum(activate_cur) activation
+      ,ifnull(( select sum(share_cur) from app_catalog_d where tenantId='default' ),0) share
+      ,ifnull(( select sum(like_cur) from app_catalog_d where tenantId='default' ),0) `like`
+      ,ifnull(( select sum(comment_cur) from app_catalog_d where tenantId='default' ),0) `comment`
+      ,sum(start_cur) startCnt
+      ,sum(case when source_flag=1 then registered_cur else 0 end) iosRegister
+      ,sum(case when source_flag=0 then registered_cur else 0 end) androidRegister
+      ,ifnull(( select sum(uv_cur) from app_user_cnt_d where tenantId='default' and cal_time=from_unixtime(1576389517,'%Y-%m-%d') ),0) dayUv
+      ,ifnull(( select sum(pv_cur) from app_user_cnt_d where tenantId='default' and cal_time=from_unixtime(1576389517,'%Y-%m-%d') ),0) dayPv
+      ,ifnull(( select ceil(sum(dur_cur)/sum(session_cnt)) from app_user_cnt_d where tenantId='default' and cal_time=from_unixtime(1576389517,'%Y-%m-%d') ),0) dayStay
+from app_user_cnt_d
+where tenantId='default' ;
+
+
+30天APP激活数趋势
+select cal_time timeStr ,ifnull(sum(activate_cur),0) number from app_user_cnt_h where tenantId=? and cal_time>=from_unixtime(1573977956,'%Y-%m-%d') and cal_time <= from_unixtime(1576569956,'%Y-%m-%d') group by cal_time order by cal_time asc
+
+
+30天稿件阅读量趋势
+select cal_time as `timeStr` , sum(pv_cur) as `pv` from `app_user_cnt_h` where cal_time>=FROM_UNIXTIME(1573977956,'%Y-%m-%d') and cal_time <= FROM_UNIXTIME(1576569956,'%Y-%m-%d') and tenantId=? group by cal_time order by cal_time ASC
+
+
+30天注册趋势
+select cal_time as `timeStr` , ifnull(sum(registered_cur),0) as `registered` from `app_user_cnt_h` where cal_time>=FROM_UNIXTIME(1573979769,'%Y-%m-%d') and cal_time <= FROM_UNIXTIME(1576571769,'%Y-%m-%d') and tenantId=? group by cal_time order by cal_time ASC
+
+
+app_article_d -- 7天阅读量排行
+
+app_article_h -- 24小时阅读量分布情况
+
+app_user_cnt_h  -- 激活趋势 阅读量趋势 注册数据趋势
+
+app_user_cnt_d
+   registered
+   pv
+   activation
+   iosRegister
+   androidRegister
+   dayUv
+   dayPv
+   dayStay
+
+   -- 中间除了分享评论点赞的指标
+
+app_catalog_d -- 7天阅读量排行的栏目 中间的评论 点赞 分享
+
+app_city_register_d -- 地域注册
