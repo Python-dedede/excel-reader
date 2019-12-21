@@ -31,8 +31,7 @@ public class MyExcelReader {
 
     public static void main(String[] args)
             throws IOException, SQLException {
-        String url = "jdbc:mysql://bj-cdb-r2d0h6ku.sql.tencentcdb.com:62484/haihe_insight?characterEncoding=utf8&serverTimezone=UTC";
-        String url2 = "jdbc:mysql://tdsql-ivt307nw.sql.tencentcdb.com:13/haihe_insight?characterEncoding=utf8&serverTimezone=UTC";
+
         String u2="haihe";
         String p2="Newmeds0bey";
         Connection con = DriverManager.getConnection(
